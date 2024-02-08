@@ -9,20 +9,55 @@ function createChat () {
 /* For chat.html */
 
 document.addEventListener('DOMContentLoaded', function () {
-  const room_id = WATCH_PARTY_ROOM_ID
   clearChatMessages()
-  getMessages(room_id)
+  getMessages()
+  // startMessagePolling()
 })
 
 // TODO: Fetch the list of existing chat messages.
 // POST to the API when the user posts a new message.
 // Automatically poll for new messages on a regular interval.
+
 function postMessage () {
-  return
+  document.getElementById("postForm").addEventListener('submit', function (event) {
+    event.preventDefault()
+    const postTextArea = document.getElementById("postText")
+    const content = postTextArea.value
+    console.log(content)
+    if (!content) {
+      alert("No messages entered!!!!")
+      return
+    }
+    const message_post = {
+      "m_body": content,
+      "user_id": WATCH_PARTY_USER_ID
+    }
+
+    fetch(`/api/rooms/${WATCH_PARTY_ROOM_ID}/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${WATCH_PARTY_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message_post)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
+        return response.json() // Assuming the API returns JSON data
+      })
+      .then(() => {
+        // Clear the textbox
+        postTextArea.value = ""
+      }
+      )
+      .catch(error => console.error('There was a problem with your fetch operation:', error))
+  })
 }
 
-function getMessages (room_id) {
-  fetch(`/api/rooms/${room_id}/getmessages`, {
+function getMessages () {
+  fetch(`/api/rooms/${WATCH_PARTY_ROOM_ID}/messages`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${WATCH_PARTY_API_KEY}`,
@@ -35,6 +70,8 @@ function getMessages (room_id) {
       return response.json() // Assuming the API returns JSON data
     })
     .then(messages => {
+      clearChatMessages()
+      console.log("100ms polling")
       messages.forEach(message => {
         showMessage(message)
       })
@@ -54,12 +91,11 @@ function showMessage (message) {
   chatBox.appendChild(messageDiv)
 }
 
-function clearChatMessages (room_id) {
+function clearChatMessages () {
   const chatBox = document.querySelector(".messages")
   chatBox.innerHTML = ""
 }
 
 function startMessagePolling () {
-
-  return
+  setInterval(getMessages, 100)
 }

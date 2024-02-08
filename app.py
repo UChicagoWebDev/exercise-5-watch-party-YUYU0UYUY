@@ -180,9 +180,9 @@ def update_username():
 # POST to change the user's password
 
 # POST to change the name of a room
-
+    
 # GET to get all the messages in a room
-@app.route('/api/rooms/<int:room_id>/getmessages', methods=['GET'])
+@app.route('/api/rooms/<int:room_id>/messages', methods=['GET'])
 def get_messages(room_id):
     print("get message")
     
@@ -198,3 +198,15 @@ def get_messages(room_id):
         
     
 # POST to post a new message to a room
+
+@app.route('/api/rooms/<int:room_id>/messages', methods=['POST'])
+def post_messages(room_id):
+    if not request.json:
+        return jsonify({"error": "No contents"}), 400
+    content = request.json.get('m_body')
+    user_id = request.json.get('user_id')
+
+    query = "insert into messages (body, room_id, user_id) values (?, ?, ?)"
+    parameters = (content, room_id, user_id)
+    query_db(query, parameters)
+    return jsonify({"message": "Message posted successfully"}), 201
