@@ -173,11 +173,32 @@ def room(room_id):
 # -------------------------------- API ROUTES ----------------------------------
 
 # POST to change the user's name
-@app.route('/api/user/name')
+@app.route('/api/user/name', methods = ['POST'])
 def update_username():
-    return {}, 403
+    if not request.json:
+        return jsonify({"error": "No contents"}), 400
+    newName = request.json.get('name')
+    user_id = request.json.get('user_id')
+
+    query = "UPDATE users SET name = ? where id = ?"
+    parameters = (newName, user_id)
+    query_db(query, parameters)
+    return jsonify({"message": "Message posted successfully"}), 201
+
 
 # POST to change the user's password
+@app.route('/api/user/password', methods = ['POST'])
+def update_password():
+    if not request.json:
+        return jsonify({"error": "No contents"}), 400
+    newPassword = request.json.get('password')
+    user_id = request.json.get('user_id')
+
+    query = "UPDATE users SET password = ? where id = ?"
+    parameters = (newPassword, user_id)
+    query_db(query, parameters)
+    return jsonify({"message": "Message posted successfully"}), 201
+
 
 # POST to change the name of a room
     
@@ -198,7 +219,6 @@ def get_messages(room_id):
         
     
 # POST to post a new message to a room
-
 @app.route('/api/rooms/<int:room_id>/messages', methods=['POST'])
 def post_messages(room_id):
     if not request.json:
