@@ -182,5 +182,19 @@ def update_username():
 # POST to change the name of a room
 
 # GET to get all the messages in a room
-
+@app.route('/api/rooms/<int:room_id>/getmessages', methods=['GET'])
+def get_messages(room_id):
+    print("get message")
+    
+    messages = query_db('select users.name, messages.body, messages.id from messages join users on messages.user_id = users.id where messages.room_id  = ?', [room_id])
+    message_in_room = []
+    for message in messages:
+        m_info = {"m_id": message[2], "user_name": message[0], "m_body": message[1]}
+        message_in_room.append(m_info)
+    
+    print(message_in_room[0]["user_name"])
+    return jsonify(message_in_room)
+    
+        
+    
 # POST to post a new message to a room
