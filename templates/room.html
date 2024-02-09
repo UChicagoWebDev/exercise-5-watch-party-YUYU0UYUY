@@ -26,16 +26,16 @@
       <!-- TODO: when clicked, 
         - remove `hide` from the `edit` h3 below
         - add `hide` to the parent h3 here -->
-      <a href="#"><span class="material-symbols-outlined">edit</span></a></h3>
+      <a id = "editbutton" href="#"><span class="material-symbols-outlined">edit</span></a></h3>
     </h3>
     <h3 class="edit hide">
-      <input value="{{ room['name'] }}">
+      <input id = "roomNameInput" value="{{ room['name'] }}">
       <!-- TODO: when clicked,
         - POST to update the room name
         - update `roomName` above with the new name
         - remove `hide` from the `display` h3 above
         - add `hide` to the parent h3 here -->
-      <a href="#"><span class="material-symbols-outlined">save</span></a></h3>
+      <a id="savebutton" href="#"><span class="material-symbols-outlined">save</span></a></h3>
     </h3>
     <div class="invite">
       Invite users to this chat at:

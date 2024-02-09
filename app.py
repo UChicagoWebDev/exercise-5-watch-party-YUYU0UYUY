@@ -201,6 +201,18 @@ def update_password():
 
 
 # POST to change the name of a room
+@app.route('/api/rooms/<int:room_id>/changeRoomName', methods=['POST'])
+def change_room_name(room_id):
+    print("change name")
+    if not request.json:
+        return jsonify({"error": "No contents"}), 400
+    
+    newRoomName = request.json.get('name')
+    query = 'UPDATE rooms SET name = ? where id = ?'
+    parameters = (newRoomName, room_id)
+    query_db(query, parameters)
+    return jsonify({"message": "Room name changed successfully"}), 201
+
     
 # GET to get all the messages in a room
 @app.route('/api/rooms/<int:room_id>/messages', methods=['GET'])

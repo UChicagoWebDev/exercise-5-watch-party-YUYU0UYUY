@@ -76,8 +76,55 @@ function createChat () {
 document.addEventListener('DOMContentLoaded', function () {
   clearChatMessages()
   getMessages()
+  editRoomName()
   // startMessagePolling()
 })
+
+function editRoomName () {
+  const editButton = document.querySelector("#editbutton")
+  const saveButton = document.querySelector("#savebutton")
+  const displayDiv = document.querySelector(".display")
+  const editDiv = document.querySelector(".edit")
+  const nameInput = document.querySelector("#roomNameInput")
+
+  // When click on the edit button show the edit input and hide the display div
+  editButton.addEventListener('click', function (event) {
+    event.preventDefault()
+    displayDiv.classList.add("hide")
+    editDiv.classList.remove("hide")
+  })
+
+
+  saveButton.addEventListener('click', function (event) {
+    event.preventDefault()
+    editDiv.classList.add("hide")
+    displayDiv.classList.remove("hide")
+
+    const roomName = { "name": nameInput.value }
+
+    fetch(`/api/rooms/${WATCH_PARTY_ROOM_ID}/changeRoomName`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${WATCH_PARTY_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(roomName)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
+        return response.json() // Assuming the API returns JSON data
+      })
+      .then(() => {
+        // Clear the textbox
+        document.querySelector(".roomname").textContent = nameInput.value
+        nameInput.value = ""
+      }
+      )
+      .catch(error => console.error('There was a problem with your fetch operation:', error))
+  })
+}
 
 // TODO: Fetch the list of existing chat messages.
 // POST to the API when the user posts a new message.
